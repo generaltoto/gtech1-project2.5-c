@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <conio.h>
+
 #include <math.h>
 #include <time.h>
-#include <conio.h>
 
 #define PLAYER_SHIP '>'
 #define PLAYER_MISSILE '-'
 #define SIGHT 23
 #define HEIGHT 7
+#define ESC 27
 
 
 char playground[HEIGHT][SIGHT];
@@ -41,6 +43,37 @@ void moveAst() {
         playground[l][c] = ' ';
       }
     }
+  }
+
+}
+
+int getPosPlayer() {
+  for (int n=0; n<HEIGHT; n++) {
+    if (playground[n][0] == '>') {
+      return n;
+    }
+  }
+}
+
+void movePlayer (int dirX) {
+
+  int posPlayer = getPosPlayer();
+
+  if (posPlayer < 0 || posPlayer > HEIGHT) {
+    printf("sorry you cant move in that direction\n\n");
+    return;
+  }
+
+  switch (dirX) {
+    case -1:
+      playground[posPlayer][0] = ' ';
+      playground[posPlayer + dirX][0] = '>';
+      break;
+
+    case 1:
+      playground[posPlayer][0] = ' ';
+      playground[posPlayer + dirX][0] = '>';
+      break;
   }
 }
 
@@ -76,7 +109,8 @@ void dispGame() {
   }
   
   for (int n=0; n<SIGHT; n++) { printf(" - "); }
-  printf("\n\n\n\n");
+  printf("\n");
+  
 
 }
 
@@ -90,15 +124,34 @@ int main() {
   dispGame();
   while (game != 1)
     {
-      //system('clear');
-      moveAst();
-      if (delay != 5 ) {delay++;}
-      else {
+      //system("clear");
+      if (delay == 5 ) {
         spawnRandomAst();
+        delay = 0;
       }
+      char frappe;
+        while( !_kbhit() ){
+
+          switch(_getch())
+          {
+            case 'z':
+              movePlayer(-1);
+              moveAst();
+              delay++;
+              break;
+            case 's':
+              movePlayer(1);
+              moveAst();
+              delay++;
+              break;
+            case 27:
+              game = 1;
+              break;
+          }
+         break;
+
+        }
       dispGame();
-      game = 1;
-      
     }
   return 0;
 }
